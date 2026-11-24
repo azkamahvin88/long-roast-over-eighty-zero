@@ -12,6 +12,10 @@
 //   Winner: "promised top five ... won zero ... the two dollars it will
 //   also lose" — two stings, and the roast performs its own punchline by
 //   entering the $2 contest it mocks. 136 chars, one sentence.
+//   v2 (revision): gate hardened — the sealed scorer requires UTF-8 text of
+//   1-200 chars, not only whitespace, and the line is one text, so an
+//   embedded newline is now rejected explicitly instead of relying on the
+//   sentence-count check alone.
 import { mkdirSync, writeFileSync } from "node:fs";
 
 const LINE =
@@ -20,6 +24,7 @@ const LINE =
 // Gate: the line must stand alone as one sentence of 1-200 characters.
 if (LINE.length > 200) throw new Error(`entry line is ${LINE.length} chars, over the 200-char limit`);
 if (LINE.trim().length === 0) throw new Error("entry line is empty");
+if (LINE.includes("\n")) throw new Error("entry line must be a single line, no embedded newline");
 if (LINE.split(/[.!?]/).filter((s) => s.trim().length > 0).length !== 1) {
   throw new Error("entry line must be exactly one sentence");
 }
